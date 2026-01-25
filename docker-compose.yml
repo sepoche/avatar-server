@@ -1,0 +1,53 @@
+#version: '3.8'
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    volumes:
+      - ./config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    ports:
+      - "8123:8123"
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    environment:
+      - TZ=Europe/Madrid
+
+  # 🧠 CHAT IA - Ollama
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama:/root/.ollama
+    restart: unless-stopped
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    network_mode: host 
+
+  # 🎤 SPEECH-TO-TEXT - Whisper
+
+     
+#   🔊 TEXT-TO-SPEECH - Piper
+
+  # 🎭 AVATAR VISUAL - Servidor Web
+  avatar-server:
+    image: node:18
+    container_name: avatar-server
+    working_dir: /app
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./avatar-server:/app
+      - /opt/homeassistant/avatar-server/wake-screen.sh:/wake-screen.sh
+    restart: unless-stopped
+    network_mode: host
+    command: >
+      sh -c "cd /app &&
+             if [ ! -d node_modules ]; then npm install; fi &&
+             node server.js"
+
+

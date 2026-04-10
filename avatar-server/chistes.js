@@ -8,9 +8,13 @@ export function getRandomJoke() {
 
 // function to get a joke by category
 export function getJokeByCategory(category) {
-    const lowerCategory = category.toLowerCase();
+    const lowerCategory = (category || "").toLowerCase();
     const jokesInCategory = JOKES_DB.filter(joke => joke.category === lowerCategory);
     if (lowerCategory === "random") {
+        return getRandomJoke();
+    }
+
+    if (!lowerCategory) {
         return getRandomJoke();
     }
 
@@ -135,8 +139,15 @@ const JOKES_DB = [
     { id: 86, category: "negro", text: "Cariño, díselo al niño con tacto… ¡por Dios, eh? ¡qué te conozco…! 'Qué sí, mujer… tranquila…! Hijo, ven un segundo que quiero hablar tranquilamente contigo… ¿te acuerdas el dibujo de la familia que hiciste ayer? Pues borra al perro.'"},
     { id: 87, category: "negro", text: "Doctor…¿Qué tal mi análisis? Me muero por saberlo… 'Mmmm… No, por saberlo no…'"},
     { id: 88, category: "negro", text: "El sentido del humor es como los padres… algunos lo tienen y otros no."},
-    { id: 89, category: "negro", text: "Cariño, nunca pensé que nuestro hijo pudiera llegar tan lejos. 'Lo sé, querido. ¡Esta catapulta es la ostia!'"}
-
-
-
+    { id: 89, category: "negro", text: "Cariño, nunca pensé que nuestro hijo pudiera llegar tan lejos. 'Lo sé, querido. ¡Esta catapulta es la ostia!'"},
+    { id: 90, category: "negro", text: "¿Qué le pasa a un hombre que se queda sin trabajo? 'Pues le pasa lo mismo que a una mujer que se queda sin marido.'"},
+    { id: 91, category: "negro", text: "¿Donde se lavó el primer juguete sexual? 'En una pila bautismal.'"},
+    { id: 92, category: "negro", text: "¿En qué se parecen una mujer a una ficha de las damas? 'En que las dos se corren con un dedo.'"},
+    { id: 93, category: "negro", text: "Sabes que te has hecho mayor cuando tu juguete sexual favorito es un rodillo de amasar."},
+    { id: 94, category: "negro", text: "Sabes que te has hecho mayor cuando el cura ya no te mira con deseo."},
+    { id: 95, category: "negro", text: "Te aviso que mi chiste es tan negro que recoge algodón"},
+    { id: 96, category: "general", text: "¿Qué hace un zombie en la playa? 'Nada, es un muerto viviente.'"},
+    { id: 97, category: "negro", text: "¿En que se parecen un chiste negro y un niño con cancer? 'En que los dos nunca envejecen'"},
+    { id: 98, category: "negro", text: "¿En que se parece la vida y una caja de dulces? 'En que la del gordo se acaba antes'"},
+    { id: 99, category: "negro", text: "¿Papá, puedo seguir columpiando al abuelo? 'No, hijo, hasta que sepamos por que se ahorcó'"}
 ];

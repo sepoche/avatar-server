@@ -74,7 +74,7 @@ export async function getWeatherText(day = "ahora") {
             }
         }
         
-        // SI NO HAY CACHÉ O ES OTRO DÍA, usar wttr.in directamente (tu código original)
+        // SI NO HAY CACHÉ O ES OTRO DÍA, usar wttr.in directamente
         if (day === "ahora" || day === "hoy") {
             const res = await fetch(`https://wttr.in/${encodedCity}?format=3`, {
                 timeout: 5000
@@ -83,11 +83,24 @@ export async function getWeatherText(day = "ahora") {
             return await res.text();
         }
 
-        // El resto de tu código para mañana y semana sigue igual...
         const res = await fetch(`https://wttr.in/${encodedCity}?format=j1`, {
             timeout: 5000
         });
-        // ... etc (todo tu código existente)
+        if (!res.ok) throw new Error("Error en wttr.in API");
+        
+        const data = await res.json();
+        
+        if (day === "mañana") {
+            const tomorrow = data.weather[1];
+            return `${city}: ${getEmojiFromDesc(tomorrow.hourly[0].weatherDesc[0].value)} ${tomorrow.avgtempC}°C`;
+        } else if (day === "semana") {
+            const weekForecast = data.weather.slice(0, 5).map(day => 
+                `${getEmojiFromDesc(day.hourly[0].weatherDesc[0].value)} ${day.avgtempC}°C`
+            ).join(' | ');
+            return `${city}: ${weekForecast}`;
+        }
+        
+        return "No se pudo obtener el clima";
         
     } catch (err) {
         console.error("❌ Error en getWeatherText:", err.message);
@@ -97,12 +110,14 @@ export async function getWeatherText(day = "ahora") {
 
 // Función helper para mantener compatibilidad
 function getEmojiFromDesc(desc) {
-    desc = desc.toLowerCase();
-    if (desc.includes('sun') || desc.includes('clear')) return '☀️';
-    if (desc.includes('cloud')) return '☁️';
-    if (desc.includes('rain')) return '🌧️';
-    if (desc.includes('snow')) return '🌨️';
-    return '☀️';
+    const descLower = desc.toLowerCase();
+    if (descLower.includes('sun') || descLower.includes('clear')) return '☀️';
+    if (descLower.includes('cloud')) return '☁️';
+    if (descLower.includes('rain')) return '🌧️';
+    if (descLower.includes('thunder')) return '⛈️';
+    if (descLower.includes('snow')) return '❄️';
+    if (descLower.includes('fog') || descLower.includes('mist')) return '🌫️';
+    return '🌡️';
 }
 
 
@@ -125,6 +140,7 @@ function getWeatherConditionFromEmoji(text) {
         "🌤️": "parcialmente soleado",
         "🌤": "parcialmente soleado",
         "⛅": "nubes dispersas",
+        "☁️": "cubierto",
         "☁️": "cielo nublado",
         "☁": "cielo nublado",
         "🌦️": "lluvia ligera",

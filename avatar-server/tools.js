@@ -60,6 +60,10 @@ export async function executeTool(toolCall, message, socket) {
 
     case "fallback":
       return await askOllama(message);
+    
+    case "what_time":
+      const now = new Date();
+      return `Son las ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')} del ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}.`;
 
     default:
       return "No entendí lo que querías.";
@@ -156,7 +160,7 @@ REGLAS IMPORTANTES:
       parameters: {
         type: "object",
         properties: {
-          day: { type: "string" }
+          day: { type: "string", enum: ["ahora", "hoy", "mañana", "semana"] }
         }
       }
     }
@@ -223,6 +227,14 @@ REGLAS IMPORTANTES:
     function: {
       name: "read_reminders",
       description: "Lee en voz alta los recordatorios activos",
+      parameters: { type: "object", properties: {} }
+    }
+  },
+        {
+    type: "function",
+    function: {
+      name: "what_time",
+      description: "Consulta la hora actual",
       parameters: { type: "object", properties: {} }
     }
   },

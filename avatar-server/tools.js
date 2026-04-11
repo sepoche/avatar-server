@@ -1,7 +1,7 @@
 import { getJokeByCategory } from './chistes.js';
 import { askOllama, getBotConfig, io } from './server.js'; 
 import { addChatMessage } from './chatHistory.js';
-import { handleReminderIntent } from './reminders.js';
+import { handleReminderIntent, getActiveRemindersText } from './reminders.js';
 import { detectDay, getWeatherText, naturalizeWeatherText } from './weather.js';
 import { detectRoom, getHATemperature, enviarOrdenHA } from './homeassistant.js';
 import { selfie } from './selfie.js';
@@ -33,6 +33,9 @@ export async function executeTool(toolCall, message, socket) {
     case "parse_reminder":
       handleReminderIntent(parsedArgs);
       return `¡Vale! He configurado tu ${parsedArgs.intent === "timer" ? "temporizador" : "recordatorio"}.`;
+
+    case "read_reminders":
+      return await speakActiveReminders();
 
     case "take_photo":
       return await toolTakePhoto(message, socket);
@@ -214,8 +217,17 @@ REGLAS IMPORTANTES:
       description: "Conversación normal",
       parameters: { type: "object", properties: {} }
     }
-  }
+  },
+    {
+    type: "function",
+    function: {
+      name: "read_reminders",
+      description: "Lee en voz alta los recordatorios activos",
+      parameters: { type: "object", properties: {} }
+    }
+  },
 ];
+
 // llamadas a funciones para cada tool:
 
 function toolJoke(args = {}) {
@@ -344,3 +356,11 @@ async function toolWeather(args) {
                 return `He enviado la orden para ${action} el dispositivo ${device}.`;
 
              }
+
+/* -------------------------------------------------------
+   FUNCIÓN PRINCIPAL PARA QUE EL ASISTENTE LEA EN VOZ ALTA
+------------------------------------------------------- */
+async function speakActiveReminders() {
+  const botText = getActiveRemindersText();
+  return botText;
+}

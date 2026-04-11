@@ -331,3 +331,76 @@ export function clearAllTimeouts() {
     }
   }
 }
+
+/* -------------------------------------------------------
+   LEER TODOS LOS REMINDERS ACTIVOS EN VOZ ALTA
+------------------------------------------------------- */
+export function getActiveRemindersText() {
+  const now = Date.now();
+  const activeReminders = [];
+
+  for (const r of reminders) {
+    let isActive = false;
+    let timeLeftText = "";
+
+    if (r.type === "timer") {
+      const elapsed = now - r.createdAt;
+      const remainingMs = r.durationMs - elapsed;
+
+      if (remainingMs > 0) {
+        isActive = true;
+        const seconds = Math.floor(remainingMs / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        
+        if (hours > 0) {
+          timeLeftText = `${hours} hora${hours > 1 ? 's' : ''} y ${minutes % 60} minuto${minutes % 60 !== 1 ? 's' : ''}`;
+        } else if (minutes > 0) {
+          timeLeftText = `${minutes} minuto${minutes > 1 ? 's' : ''} y ${seconds % 60} segundo${seconds % 60 !== 1 ? 's' : ''}`;
+        } else {
+          timeLeftText = `${seconds} segundo${seconds !== 1 ? 's' : ''}`;
+        }
+      }
+    }
+
+    if (r.type === "reminder") {
+      const target = new Date(r.date).getTime();
+      const remainingMs = target - now;
+
+      if (remainingMs > 0) {
+        isActive = true;
+        const days = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((remainingMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        
+        if (days > 0) {
+          timeLeftText = `${days} día${days > 1 ? 's' : ''}, ${hours} hora${hours !== 1 ? 's' : ''}`;
+        } else if (hours > 0) {
+          timeLeftText = `${hours} hora${hours > 1 ? 's' : ''} y ${minutes} minuto${minutes !== 1 ? 's' : ''}`;
+        } else if (minutes > 0) {
+          timeLeftText = `${minutes} minuto${minutes > 1 ? 's' : ''}`;
+        } else {
+          timeLeftText = `menos de un minuto`;
+        }
+      }
+    }
+
+    if (isActive) {
+      let typeText = r.type === "timer" ? "temporizador" : "recordatorio";
+      activeReminders.push(`${typeText}: "${r.message}", pendiente en ${timeLeftText}`);
+    }
+  }
+
+  if (activeReminders.length === 0) {
+    return "No tienes temporizadores ni recordatorios activos.";
+  }
+
+  if (activeReminders.length === 1) {
+    return `Tienes un ${activeReminders[0]}.`;
+  }
+
+  const lista = activeReminders.slice(0, -1).join(", ");
+  const ultimo = activeReminders[activeReminders.length - 1];
+  return `Tienes ${activeReminders.length} elementos pendientes: ${lista} y ${ultimo}.`;
+}
+

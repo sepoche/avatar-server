@@ -149,5 +149,6 @@ const JOKES_DB = [
     { id: 96, category: "general", text: "¿Qué hace un zombie en la playa? 'Nada, es un muerto viviente.'"},
     { id: 97, category: "negro", text: "¿En que se parecen un chiste negro y un niño con cancer? 'En que los dos nunca envejecen'"},
     { id: 98, category: "negro", text: "¿En que se parece la vida y una caja de dulces? 'En que la del gordo se acaba antes'"},
-    { id: 99, category: "negro", text: "¿Papá, puedo seguir columpiando al abuelo? 'No, hijo, hasta que sepamos por que se ahorcó'"}
+    { id: 99, category: "negro", text: "¿Papá, puedo seguir columpiando al abuelo? 'No, hijo, hasta que sepamos por que se ahorcó'"},
+    { id: 100, category: "negro", text: "¿Por que los niños en estados unidos tienen un coeficiente intelectual tan alto? 'por que se matan estudiando'"
 ];
